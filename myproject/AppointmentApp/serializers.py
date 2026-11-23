@@ -12,7 +12,6 @@ class AppointmentSerializer(serializers.ModelSerializer):
         read_only_fields = ["created_at", "updated_at"]
 
     def validate_appointment_date(self, value):
-        # DRF n'appelle pas clean() du modèle : on répète la règle ici.
         if value <= timezone.now():
             raise serializers.ValidationError("La date du rendez-vous doit être dans le futur.")
         return value

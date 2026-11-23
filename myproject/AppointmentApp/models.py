@@ -14,18 +14,17 @@ class Appointment(models.Model):
         "AccountApp.Doctor",
         on_delete=models.CASCADE,
         related_name="appointments",
-        verbose_name="praticien",
+        verbose_name="Doctor",
     )
     patient = models.ForeignKey(
         "AccountApp.Patient",
         on_delete=models.CASCADE,
         related_name="appointments",
-        verbose_name="demandeur",
+        verbose_name="Patient",
     )
     reason = models.TextField()
     prescription = models.FileField(
         upload_to="prescriptions/",
-        null=True,
         blank=True,
         validators=[FileExtensionValidator(allowed_extensions=["pdf"])],
     )
@@ -40,6 +39,7 @@ class Appointment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        ordering = ["appointment_date"]
         constraints = [
             models.UniqueConstraint(
                 fields=["doctor", "appointment_date"],
@@ -49,9 +49,21 @@ class Appointment(models.Model):
 
     def clean(self):
         super().clean()
-        if self.appointment_date and self.appointment_date <= timezone.now():
+        if self.appointment_date is None:
+            return
+
+        date_changed = True
+        if self.pk:
+            old_date = (
+                Appointment.objects.filter(pk=self.pk)
+                .values_list("appointment_date", flat=True)
+                .first()
+            )
+            date_changed = old_date != self.appointment_date
+
+        if date_changed and self.appointment_date <= timezone.now():
             raise ValidationError(
-                {"appointment_date": "La date du rendez-vous doit être dans le futur."}
+                {"appointment_date": "La date du rendez-vous doit être postérieure à maintenant."}
             )
 
     def __str__(self):

@@ -66,7 +66,7 @@ WSGI_APPLICATION = 'workshop3A7.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / '3A7.sqlite3',
+        'NAME': BASE_DIR / 'samar_mekki.sqlite3',
     }
 }
 

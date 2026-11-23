@@ -14,11 +14,17 @@ def validate_past_date(value):
 
 
 class User(AbstractUser):
-    pass
+    class Meta:
+        verbose_name = "User"
+        verbose_name_plural = "Users"
 
 
 class Specialty(models.Model):
     name = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name = "Specialty"
+        verbose_name_plural = "Specialties"
 
     def __str__(self):
         return self.name
@@ -33,6 +39,10 @@ class Doctor(User):
     phone = models.CharField(max_length=8, validators=[phone_validator])
     specialties = models.ManyToManyField(Specialty, related_name='doctors')
 
+    class Meta:
+        verbose_name = "Doctor"
+        verbose_name_plural = "Doctors"
+
     def __str__(self):
         return f"Dr {self.first_name} {self.last_name}"
 
@@ -45,6 +55,10 @@ class Patient(User):
     )
     phone = models.CharField(max_length=8, validators=[phone_validator])
     birth_date = models.DateField(validators=[validate_past_date])
+
+    class Meta:
+        verbose_name = "Patient"
+        verbose_name_plural = "Patients"
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
